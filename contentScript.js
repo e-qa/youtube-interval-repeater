@@ -1,25 +1,25 @@
 // Define CSS styles for the modal
 const modalCSS = `
-  display: flex; // Make the modal flex container
-  color: white; // Text color
-  background-color:#3f3f3f; // Background color
-  align-items: center; // Align items vertically
-  justify-content: center; // Align items horizontally
-  width: 300px; // Width of the modal
-  border-radius: 20px; // Rounded corners
-  padding: 5px 10px; // Padding around content
-  position: fixed; // Fixed positioning
-  top: 60px; // Distance from top
-  left: 0; // Distance from left
+  display: flex; 
+  color: white; 
+  background-color:#3f3f3f; 
+  align-items: center; 
+  justify-content: center; 
+  width: 300px; 
+  border-radius: 20px; 
+  padding: 5px 10px; 
+  position: fixed; 
+  top: 60px; 
+  left: 0; 
 `;
 
 // Define CSS styles for the inner modal
 const modalInnerCss = `
-  display: flex; // Make the inner content flex container
-  align-items: center; // Align items vertically
-  justify-content: center; // Align items horizontally
-  flex-direction: column; // Arrange items in a column
-  gap: 10px; // Gap between items
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  flex-direction: column;  
+  gap: 10px;
 `;
 
 // Listen for messages from the extension
