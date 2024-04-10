@@ -1,80 +1,78 @@
-(() => {
-  let youtubeLeftControls, youtubePlayer;
+const modalCSS = `
+  display: flex;
+  color: white;
+  background-color:#3f3f3f;
+  align-items: center;
+  justify-content: center;
+  width: 300px;
+  border-radius: 20px;
+  padding: 5px 10px;
+  position: fixed;
+  top: 60px;
+  left: 0;
+`;
 
-  chrome.runtime.onMessage.addListener((obj) => {
-    const { type } = obj;
+const modalInnerCss = `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 10px;
+`;
 
-    if (type === "LOOP_VIDEO") {
-      newVideoLoaded();
-    }
-  });
+let youtubeLeftControls, youtubePlayer;
 
-  const newVideoLoaded = () => {
-    const loopBtnClass = document.getElementsByClassName("loop-btn")[0];
+chrome.runtime.onMessage.addListener((msg) => {
+  if (msg === "VIDEO") {
+    newVideoLoaded();
+  }
+});
 
-    if (!loopBtnClass) {
-      const loopBtn = document.createElement("img");
-      loopBtn.src = chrome.runtime.getURL("/img/btn-img.png");
+const newVideoLoaded = () => {
+  const loopBtnClass = document.getElementsByClassName("loop-btn")[0];
 
-      loopBtn.className = "loop-btn";
-      loopBtn.title = "start the loop";
-      loopBtn.curson = "pointer";
-      loopBtn.addEventListener("mouseover", function () {
-        loopBtn.style.cursor = "pointer";
-      });
+  if (!loopBtnClass) {
+    const loopBtn = document.createElement("img");
+    loopBtn.src = chrome.runtime.getURL("/img/btn-img.png");
 
-      youtubeLeftControls =
-        document.getElementsByClassName("ytd-watch-metadata")[10];
+    loopBtn.className = "loop-btn";
+    loopBtn.title = "start the loop";
+    loopBtn.curson = "pointer";
+    loopBtn.addEventListener("mouseover", function () {
+      loopBtn.style.cursor = "pointer";
+    });
 
-      youtubePlayer = document.getElementsByClassName("video-stream")[0];
+    youtubeLeftControls =
+      document.getElementsByClassName("ytd-watch-metadata")[10];
 
-      youtubeLeftControls.appendChild(loopBtn);
+    youtubePlayer = document.getElementsByClassName("video-stream")[0];
 
-      loopBtn.addEventListener("click", openModal);
-    }
-  };
+    youtubeLeftControls.appendChild(loopBtn);
 
-  const openModal = () => {
-    let modalDiv = document.body.getElementsByClassName("modal");
+    loopBtn.addEventListener("click", openModal);
+  }
+};
 
-    if (modalDiv.length > 0) {
-      modalDiv[0].remove();
-    } else {
-      modal();
-    }
-  };
+const openModal = () => {
+  let modalDiv = document.body.getElementsByClassName("modal");
 
-  function modal() {
-    // modal
-    let modalLoop = document.createElement("div");
-    modalLoop.className = "modal";
+  if (modalDiv.length > 0) {
+    modalDiv[0].remove();
+  } else {
+    modal();
+  }
+};
 
-    //modal css
-    modalLoop.style.display = "flex";
-    modalLoop.style.backgroundColor = "#3f3f3f";
-    modalLoop.style.color = "white";
-    modalLoop.style.alignItems = "center";
-    modalLoop.style.justifyContent = "center";
-    modalLoop.style.width = "300px";
-    modalLoop.style.borderRadius = "20px";
-    modalLoop.style.padding = "5px 10px";
+function modal() {
+  const modalLoop = document.createElement("div");
+  modalLoop.className = "modal";
+  modalLoop.style.cssText = modalCSS;
 
-    modalLoop.style.position = "fixed";
-    modalLoop.style.top = "60px";
-    modalLoop.style.left = "0";
+  let modalInner = document.createElement("div");
+  modalInner.classList = "modal-inner";
+  modalInner.style.cssText = modalInnerCss;
 
-    // modalInner
-    let modalInner = document.createElement("div");
-    modalInner.classList = "modal-inner";
-
-    //modalInner css
-    modalInner.style.display = "flex";
-    modalInner.style.alignItems = "center";
-    modalInner.style.justifyContent = "center";
-    modalInner.style.flexDirection = "column";
-    modalInner.style.gap = "10px";
-
-    modalInner.innerHTML = `
+  modalInner.innerHTML = `
        <label for="startMinute">startMinute</label>
         <input type="number" id="startMinute" />
   
@@ -91,43 +89,42 @@
 
   `;
 
-    // append
-    modalLoop.appendChild(modalInner);
-    document.body.appendChild(modalLoop);
+  // append
+  modalLoop.appendChild(modalInner);
+  document.body.appendChild(modalLoop);
 
-    let startLoopBtn = document.getElementById("startLoopBtn");
-    let stopLoopBtn = document.getElementById("stopLoopBtn");
-    startLoopBtn.addEventListener("click", startLoop);
-    stopLoopBtn.addEventListener("click", stopLoop);
-  }
+  let startLoopBtn = document.getElementById("startLoopBtn");
+  let stopLoopBtn = document.getElementById("stopLoopBtn");
+  startLoopBtn.addEventListener("click", startLoop);
+  stopLoopBtn.addEventListener("click", stopLoop);
+}
 
-  let timeUpdateListener;
+let timeUpdateListener;
 
-  function startLoop() {
-    let startMinute = document.getElementById("startMinute");
-    let startSecond = document.getElementById("startSecond");
-    let endMinute = document.getElementById("endMinute");
-    let endSecond = document.getElementById("endSecond");
+function startLoop() {
+  let startMinute = document.getElementById("startMinute");
+  let startSecond = document.getElementById("startSecond");
+  let endMinute = document.getElementById("endMinute");
+  let endSecond = document.getElementById("endSecond");
 
-    let convertStartMinute = startMinute.value * 60;
-    let convertStartSecond = startSecond.value % 60;
-    let convertEndMinute = endMinute.value * 60;
-    let convertEndSecond = endSecond.value % 60;
+  let convertStartMinute = startMinute.value * 60;
+  let convertStartSecond = startSecond.value % 60;
+  let convertEndMinute = endMinute.value * 60;
+  let convertEndSecond = endSecond.value % 60;
 
-    youtubePlayer.currentTime = convertStartMinute + convertStartSecond;
+  youtubePlayer.currentTime = convertStartMinute + convertStartSecond;
 
-    timeUpdateListener = () => {
-      if (youtubePlayer.currentTime >= convertEndMinute + convertEndSecond) {
-        youtubePlayer.currentTime = convertStartMinute + convertStartSecond;
-      }
-    };
-    youtubePlayer.addEventListener("timeupdate", timeUpdateListener);
-  }
-
-  function stopLoop() {
-    if (timeUpdateListener) {
-      youtubePlayer.removeEventListener("timeupdate", timeUpdateListener);
-      timeUpdateListener = null;
+  timeUpdateListener = () => {
+    if (youtubePlayer.currentTime >= convertEndMinute + convertEndSecond) {
+      youtubePlayer.currentTime = convertStartMinute + convertStartSecond;
     }
+  };
+  youtubePlayer.addEventListener("timeupdate", timeUpdateListener);
+}
+
+function stopLoop() {
+  if (timeUpdateListener) {
+    youtubePlayer.removeEventListener("timeupdate", timeUpdateListener);
+    timeUpdateListener = null;
   }
-})();
+}
