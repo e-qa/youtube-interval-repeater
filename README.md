@@ -10,3 +10,5 @@ This Google Chrome extension is designed to repeat a specific interval of songs 
 4. **Load the Extension:** Click the "Load unpacked" button and select the directory where you cloned the repository.
 5. **Open a Song on YouTube:** Navigate to the song you want to listen to on YouTube.
 6. **Set Start and End Times, then Start Repeating:** Use the extension's interface to set the start and end times for the interval you want to repeat. Save your settings and start the repeating interval.
+
+![Screenshot (103)](https://github.com/user-attachments/assets/68706f1c-0836-4ad4-824f-9e111119cd1e)
