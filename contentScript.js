@@ -22,10 +22,11 @@
   gap: 10px;   
   `;
   const loopBtnStyle = `margin: 0px 12px;`;
-  let youtubeLeftControls;
-  let youtubePlayer;
+  let youtubeLeftControls = null;
+  let youtubePlayer = null;
   let previousUrl = null;
 
+	
   chrome.runtime.onMessage.addListener((msg) => {
     let url = getYouTubeVideoID(msg.tab.url);
 
@@ -136,6 +137,7 @@
         youtubePlayer.currentTime = convertStartMinute + convertStartSecond;
       }
     };
+
     youtubePlayer.addEventListener('timeupdate', timeUpdateListener);
   }
 
@@ -143,6 +145,7 @@
     if (timeUpdateListener) {
       youtubePlayer.removeEventListener('timeupdate', timeUpdateListener);
       timeUpdateListener = null;
+	previousUrl = null;
     }
   }
   function getYouTubeVideoID(url) {
